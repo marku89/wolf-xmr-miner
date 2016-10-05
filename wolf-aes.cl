@@ -1,6 +1,21 @@
 #ifndef WOLF_AES_CL
 #define WOLF_AES_CL
 
+
+inline u32x __bfe (const u32x a, const u32x b, const u32x c)
+{
+  #define BIT(x)      ((u32x) (1u) << (x))
+  #define BIT_MASK(x) (BIT (x) - 1)
+  #define BFE(x,y,z)  (((x) >> (y)) & BIT_MASK (z))
+
+  return BFE (a, b, c);
+
+  #undef BIT
+  #undef BIT_MASK
+  #undef BFE
+}
+
+
 // AES table - the other three are generated on the fly
 
 static const __constant uint AES0_C[256] =
@@ -70,8 +85,13 @@ static const __constant uint AES0_C[256] =
 	0xC3414182U, 0xB0999929U, 0x772D2D5AU, 0x110F0F1EU,
 	0xCBB0B07BU, 0xFC5454A8U, 0xD6BBBB6DU, 0x3A16162CU
 };
-
-#define BYTE(x, y)	(amd_bfe((x), (y) << 3U, 8U))
+#ifdef IS_AMD
+	
+	#define BYTE(x, y)	(amd_bfe((x), (y) << 3U, 8U))
+#endif
+#ifdef IS_GENERIC
+	#define BYTE(x, y)      (__bfe((x), (y) << 3U, 8U))
+#endif
 
 uint4 AES_Round(const __local uint *AES0, const __local uint *AES1, const __local uint *AES2, const __local uint *AES3, const uint4 X, const uint4 key)
 {

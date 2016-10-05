@@ -1,4 +1,43 @@
-#pragma OPENCL EXTENSION cl_amd_media_ops2 : enable
+
+#if   VENDOR_ID == (1 << 0)
+#define IS_AMD
+#elif VENDOR_ID == (1 << 1)
+#define IS_APPLE
+#define IS_GENERIC
+#elif VENDOR_ID == (1 << 2)
+#define IS_INTEL_BEIGNET
+#define IS_GENERIC
+#elif VENDOR_ID == (1 << 3)
+#define IS_INTEL_SDK
+#define IS_GENERIC
+#elif VENDOR_ID == (1 << 4)
+#define IS_MESA
+#define IS_GENERIC
+#elif VENDOR_ID == (1 << 5)
+#define IS_NV
+//#define IS_GENERIC
+#elif VENDOR_ID == (1 << 6)
+#define IS_POCL
+#define IS_GENERIC
+#else
+#define IS_GENERIC
+#endif
+
+#define VECT_SIZE 1
+
+typedef uchar  u8;
+typedef ushort u16;
+typedef uint   u32;
+typedef ulong  u64;
+
+typedef uchar   u8x;
+typedef ushort  u16x;
+typedef uint    u32x;
+typedef ulong   u64x;
+
+#ifdef IS_AMD
+	#pragma OPENCL EXTENSION cl_amd_media_ops2 : enable
+#endif
 
 
 #include "wolf-aes.cl"
@@ -313,9 +352,14 @@ void CNKeccak(ulong *output, ulong *input)
 
 static const __constant uchar rcon[8] = { 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40 };
 
-#pragma OPENCL EXTENSION cl_amd_media_ops2 : enable
+#ifdef IS_AMD
+	#define BYTE(x, y)      (amd_bfe((x), (y) << 3U, 8U))
+#endif
 
-#define BYTE(x, y)	(amd_bfe((x), (y) << 3U, 8U))
+#ifdef IS_GENERIC
+	#define BYTE(x, y)      (__bfe((x), (y) << 3U, 8U)) 
+#endif
+
 
 #define SubWord(inw)		((sbox[BYTE(inw, 3)] << 24) | (sbox[BYTE(inw, 2)] << 16) | (sbox[BYTE(inw, 1)] << 8) | sbox[BYTE(inw, 0)])
 

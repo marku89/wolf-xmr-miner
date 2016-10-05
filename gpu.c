@@ -57,7 +57,7 @@ int32_t InitOpenCLPlatformContext(OCLPlatform *OCL, uint32_t RequestedPlatformId
 	OCL->Platform = PlatformIDList[RequestedPlatformIdx];
 	free(PlatformIDList);
 	
-	retval = clGetDeviceIDs(OCL->Platform, CL_DEVICE_TYPE_GPU, 0, NULL, &entries);
+	retval = clGetDeviceIDs(OCL->Platform, CL_DEVICE_TYPE_ALL, 0, NULL, &entries);
 	
 	if(retval != CL_SUCCESS)
 	{
@@ -78,7 +78,7 @@ int32_t InitOpenCLPlatformContext(OCLPlatform *OCL, uint32_t RequestedPlatformId
 	
 	DeviceIDList = (cl_device_id *)malloc(sizeof(cl_device_id) * entries);
 	
-	retval = clGetDeviceIDs(OCL->Platform, CL_DEVICE_TYPE_GPU, entries, DeviceIDList, NULL);
+	retval = clGetDeviceIDs(OCL->Platform, CL_DEVICE_TYPE_ALL, entries, DeviceIDList, NULL);
 	
 	if(retval != CL_SUCCESS)
 	{

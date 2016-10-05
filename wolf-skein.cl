@@ -1,6 +1,5 @@
 #ifndef WOLF_SKEIN_CL
 #define WOLF_SKEIN_CL
-
 // Vectorized Skein implementation macros and functions by Wolf
 
 #define SKEIN_KS_PARITY	0x1BD11BDAA9FC1A22
@@ -28,10 +27,18 @@ static const __constant ulong SKEIN512_256_IV[8] =
 	p.s7 += s; \
 } while(0)
 
+#define BITALIGN(hi, lo, s) (((hi) << (32 - (s))) | ((lo) >> (s)))
+
+
 ulong SKEIN_ROT(const uint2 x, const uint y)
 {
-	if(y < 32) return(as_ulong(amd_bitalign(x, x.s10, 32 - y)));
-	else return(as_ulong(amd_bitalign(x.s10, x, 32 - (y - 32))));
+		if(y < 32) return(as_ulong(BITALIGN(x, x.s10, 32 - y)));
+		else return(as_ulong(BITALIGN(x.s10, x , 32 - (y - 32))));
+	//#endif
+	//#ifdef IS_GENERIC
+	//	if(y < 32) return(as_ulong( ((( (x)) << 32) | ((u64x) (x.s10))) >> (((32 - y) & 3) * 8)));
+	//	else return(as_ulong(((( (x.10)) << 32) | ((u64x) (x))) >> (((32 - (y - 32)) & 3) * 8)));
+	//#endif
 }
 
 void SkeinMix8(ulong4 *pv0, ulong4 *pv1, const uint rc0, const uint rc1, const uint rc2, const uint rc3)

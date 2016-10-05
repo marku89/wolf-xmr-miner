@@ -451,7 +451,7 @@ int32_t RunXMRTest(AlgoContext *HashData, void *HashOutput)
 	clFinish(*HashData->CommandQueues);
 	
 	size_t Nonce[2] = {HashData->Nonce, 1}, gthreads[2] = { GlobalThreads, 8 }, lthreads[2] = { LocalThreads, 8 };
-	
+	//printf("DATA get GT %zu and LT %zu \n",GlobalThreads,LocalThreads);	
 	{
 		retval = clEnqueueNDRangeKernel(*HashData->CommandQueues, HashData->Kernels[0], 2, Nonce, gthreads, lthreads, 0, NULL, NULL);
 		
