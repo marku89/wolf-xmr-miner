@@ -1,5 +1,5 @@
 # wolf-xmr-miner
-Wolf's OpenCL XMR Miner for AMD GPUs
+Wolf's OpenCL XMR Miner for AMD GPUs and GENERGIC Opencl devices , TESTED with Intel Opencl driver 1.2
 
 If you get an error about clCreateBuffer - lower your rawintensity. See the example config xmr.conf for details.
 
